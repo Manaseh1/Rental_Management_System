@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management | Rental System</title>
+    <link rel="stylesheet" href="..\auth_ui\style.css">
+    <link rel="stylesheet" href="room.css">
+</head>
+<body>
+    <div class="room-shell">
+        <header class="room-header">
+            <div>
+                <h1>Room management</h1>
+                <p>Quickly add, update, and manage room inventory for your rental system.</p>
+            </div>
+            <button id="refreshBtn" class="primary-btn">Refresh</button>
+        </header>
+
+        <section class="room-grid">
+            <div class="room-panel">
+                <h2>Add or edit a room</h2>
+                <form id="roomForm">
+                    <label>
+                        Room ID (required)
+                        <input id="roomId" type="number" placeholder="e.g. 101" required>
+                    </label>
+
+                    <label>
+                        Room type
+                        <input id="roomType" type="text" placeholder="e.g. Deluxe suite" required>
+                    </label>
+
+                    <label>
+                        Description
+                        <textarea id="roomDescription" placeholder="Enter a brief description"></textarea>
+                    </label>
+
+                    <label>
+                        Price
+                        <input id="roomPrice" type="number" min="0" step="0.01" placeholder="e.g. 120.00" required>
+                    </label>
+
+                    <div class="controls">
+                        <button type="submit" class="primary-btn">Save room</button>
+                        <button id="cancelBtn" type="button" class="secondary-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="room-panel">
+                <div class="list-header">
+                    <div>
+                        <h2>Room list</h2>
+                        <p class="status-message" id="message">Loading rooms…</p>
+                    </div>
+                </div>
+
+                <div class="search-row">
+                    <input id="filterType" type="text" placeholder="Filter by type">
+                    <input id="minPrice" type="number" min="0" step="0.01" placeholder="Min price">
+                    <input id="maxPrice" type="number" min="0" step="0.01" placeholder="Max price">
+                    <button id="searchBtn" class="secondary-btn">Search</button>
+                </div>
+
+                <div id="roomsContainer" class="room-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../js/room.js"></script>
+</body>
+</html>

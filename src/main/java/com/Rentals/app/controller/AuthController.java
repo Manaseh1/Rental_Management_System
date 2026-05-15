@@ -38,8 +38,7 @@ public class AuthController {
             request.getEmail(),
             request.getPassword());
 
-        redirectAttributes.addFlashAttribute("message", "Registration successful! Please login.");
-        return "redirect:/login";
+        return "redirect:/login?registered=true";
     }
 
     // Debug endpoint to view all users

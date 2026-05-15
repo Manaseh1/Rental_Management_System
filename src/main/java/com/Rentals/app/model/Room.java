@@ -6,49 +6,54 @@ import jakarta.persistence.*;
 public class Room {
     //Variables that are used to create the Room table in the database
     @Id
-    @Column(nullable = false, unique = true)
-    private Long RoomId;
+    @Column(name = "room_id", nullable = false, unique = true)
 
-    @Column(nullable = false)
-    private String RoomType;
+    private Long room_id;
 
-    @Column(nullable = true)
-    private String RoomDescription;
+    @Column(name = "room_type", nullable = false)
 
-    @Column(nullable = false)
-    private Double RoomPrice;
+    private String room_type;
+
+    @Column(name = "room_description", nullable = true)
+
+    private String room_description;
+
+    @Column(name = "room_price", nullable = false)
+
+    private Double room_price;
 
     //Getters are used to get the values of the variables
     public Long getRoomId() {
-        return RoomId;
+        return room_id;
     }
 
     public String getRoomType() {
-        return RoomType;
+        return room_type;
     }
 
     public String getRoomDescription() {
-        return RoomDescription;
+        return room_description;
     }
+    
 
     public Double getRoomPrice() {
-        return RoomPrice;
+        return room_price;
     }
 
     //Setters are used to set the values of the variables
-    public void setRoomId(Long RoomId) {
-        this.RoomId = RoomId;
+    public void setRoomId(Long room_id) {
+        this.room_id = room_id;
     }
 
-    public void setRoomType(String RoomType) {
-        this.RoomType = RoomType;
+    public void setRoomType(String room_type) {
+        this.room_type = room_type;
     }
 
-    public void setRoomDescription(String RoomDescription) {
-        this.RoomDescription = RoomDescription;
+    public void setRoomDescription(String room_description) {
+        this.room_description = room_description;
     }
 
-    public void setRoomPrice(Double RoomPrice) {
-        this.RoomPrice = RoomPrice;
+    public void setRoomPrice(Double room_price) {
+        this.room_price = room_price;
     }
 }

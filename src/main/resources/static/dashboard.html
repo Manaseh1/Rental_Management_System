@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Rental System</title>
+    <link rel="stylesheet" href="auth_ui/style.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #eef2ff;
+            margin: 0;
+            font-family: "Quicksand", sans-serif;
+        }
+        .dashboard-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+        }
+        .dashboard-card h1 {
+            margin: 0 0 14px;
+            color: #111827;
+        }
+        .dashboard-card p {
+            margin: 0 0 24px;
+            color: #475569;
+            line-height: 1.7;
+        }
+        .dashboard-card a {
+            display: inline-block;
+            text-decoration: none;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .dashboard-card a:hover {
+            opacity: 0.96;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-card">
+        <h1>Login successful</h1>
+        <p>Welcome back! Your sign in was successful. Use the button below to manage rooms or return to the login page if you need to sign in again.</p>
+        <a href="auth_ui/Room/Room.html">Go to Room management</a>
+    </div>
+</body>
+</html>
