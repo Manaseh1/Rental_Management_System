@@ -15,5 +15,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByRoomPriceBetween(Double minPrice, Double maxPrice);
 
+    List<Room> findByStatus(String status);
+
     boolean existsByRoomId(Long roomId);
 }

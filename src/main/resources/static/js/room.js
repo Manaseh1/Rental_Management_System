@@ -4,6 +4,7 @@ const roomForm = document.getElementById('roomForm');
 const roomIdInput = document.getElementById('roomId');
 const roomTypeInput = document.getElementById('roomType');
 const roomDescriptionInput = document.getElementById('roomDescription');
+const roomStatusInput = document.getElementById('roomStatus');
 const roomPriceInput = document.getElementById('roomPrice');
 const roomsContainer = document.getElementById('roomsContainer');
 const messageEl = document.getElementById('message');
@@ -11,6 +12,7 @@ const refreshBtn = document.getElementById('refreshBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const searchBtn = document.getElementById('searchBtn');
 const filterTypeInput = document.getElementById('filterType');
+const filterStatusInput = document.getElementById('filterStatus');
 const minPriceInput = document.getElementById('minPrice');
 const maxPriceInput = document.getElementById('maxPrice');
 let currentEditRoomId = null;
@@ -34,6 +36,7 @@ function clearForm() {
     roomIdInput.readOnly = false;
     roomTypeInput.value = '';
     roomDescriptionInput.value = '';
+    roomStatusInput.value = 'vacant';
     roomPriceInput.value = '';
     showMessage('Ready to create a new room.');
 }
@@ -41,10 +44,12 @@ function clearForm() {
 function getQueryUrl() {
     const params = new URLSearchParams();
     const type = filterTypeInput.value.trim();
+    const status = filterStatusInput.value;
     const minPrice = minPriceInput.value;
     const maxPrice = maxPriceInput.value;
 
     if (type) params.append('type', type);
+    if (status) params.append('status', status);
     if (minPrice) params.append('minPrice', minPrice);
     if (maxPrice) params.append('maxPrice', maxPrice);
 
@@ -94,7 +99,7 @@ function renderRooms(rooms) {
 
         const meta = document.createElement('div');
         meta.className = 'room-card-meta';
-        meta.innerHTML = `<span>Type: ${room.roomType || '—'}</span><span>Price: $${room.roomPrice?.toFixed(2) || '0.00'}</span>`;
+        meta.innerHTML = `<span>Type: ${room.roomType || '—'}</span><span>Status: ${room.status || '—'}</span><span>Price: $${room.roomPrice?.toFixed(2) || '0.00'}</span>`;
         card.appendChild(meta);
 
         const actions = document.createElement('div');
@@ -124,6 +129,7 @@ function populateForm(room) {
     roomIdInput.readOnly = true;
     roomTypeInput.value = room.roomType || '';
     roomDescriptionInput.value = room.roomDescription || '';
+    roomStatusInput.value = room.status || 'vacant';
     roomPriceInput.value = room.roomPrice || '';
     showMessage('Editing room ID ' + room.roomId + '. Save to update or cancel to reset.');
 }
@@ -154,6 +160,7 @@ roomForm.addEventListener('submit', async event => {
         roomId: currentEditRoomId ? currentEditRoomId : parseInt(roomId),
         roomType: roomTypeInput.value.trim(),
         roomDescription: roomDescriptionInput.value.trim(),
+        status: roomStatusInput.value,
         roomPrice: parseFloat(roomPriceInput.value)
     };
 

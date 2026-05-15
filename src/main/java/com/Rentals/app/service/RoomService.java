@@ -31,6 +31,9 @@ public class RoomService {
         if (roomRepository.existsById(room.getRoomId())) {
             throw new IllegalArgumentException("Room already exists with id " + room.getRoomId());
         }
+        if (room.getStatus() == null || room.getStatus().isEmpty()) {
+            room.setStatus("vacant");
+        }
         return roomRepository.save(room);
     }
 
@@ -39,6 +42,7 @@ public class RoomService {
                 .map(existingRoom -> {
                     existingRoom.setRoomType(room.getRoomType());
                     existingRoom.setRoomDescription(room.getRoomDescription());
+                    existingRoom.setStatus(room.getStatus());
                     existingRoom.setRoomPrice(room.getRoomPrice());
                     return roomRepository.save(existingRoom);
                 });
@@ -63,6 +67,10 @@ public class RoomService {
 
     public List<Room> searchByPriceRange(Double minPrice, Double maxPrice) {
         return roomRepository.findByRoomPriceBetween(minPrice, maxPrice);
+    }
+
+    public List<Room> searchByStatus(String status) {
+        return roomRepository.findByStatus(status);
     }
 
     public boolean roomExists(Long id) {

@@ -31,6 +31,11 @@ public class AuthController {
         return "redirect:/auth_ui/register.html";
     }
 
+    @GetMapping("/dashboard")
+    public String showDashboard() {
+        return "redirect:/dashboard.html";
+    }
+
     @PostMapping("/register")
     public String registerUser(@Valid RegisterRequest request, RedirectAttributes redirectAttributes){
         authService.register(
@@ -47,4 +52,6 @@ public class AuthController {
     public Object getAllUsers() {
         return userRepository.findAll();
     }
+    
+
 }

@@ -7,53 +7,61 @@ public class Room {
     //Variables that are used to create the Room table in the database
     @Id
     @Column(name = "room_id", nullable = false, unique = true)
-
-    private Long room_id;
+    private Long roomId;
 
     @Column(name = "room_type", nullable = false)
-
-    private String room_type;
+    private String roomType;
 
     @Column(name = "room_description", nullable = true)
+    private String roomDescription;
 
-    private String room_description;
+    @Column(name = "status", nullable = false)
+    private String status;
 
     @Column(name = "room_price", nullable = false)
-
-    private Double room_price;
+    private Double roomPrice;
 
     //Getters are used to get the values of the variables
     public Long getRoomId() {
-        return room_id;
+        return roomId;
     }
 
     public String getRoomType() {
-        return room_type;
+        return roomType;
     }
 
     public String getRoomDescription() {
-        return room_description;
+        return roomDescription;
     }
-    
+
+    public String getStatus() {
+        return status;
+    }
 
     public Double getRoomPrice() {
-        return room_price;
+        return roomPrice;
     }
 
     //Setters are used to set the values of the variables
-    public void setRoomId(Long room_id) {
-        this.room_id = room_id;
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
-    public void setRoomType(String room_type) {
-        this.room_type = room_type;
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 
-    public void setRoomDescription(String room_description) {
-        this.room_description = room_description;
+    public void setRoomDescription(String roomDescription) {
+        this.roomDescription = roomDescription;
     }
 
-    public void setRoomPrice(Double room_price) {
-        this.room_price = room_price;
+    public void setStatus(String status) {
+        this.status = status;
     }
+
+    public void setRoomPrice(Double roomPrice) {
+        this.roomPrice = roomPrice;
+    }
+
+  
 }

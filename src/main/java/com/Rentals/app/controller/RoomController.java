@@ -63,13 +63,17 @@ public class RoomController {
     @GetMapping("/search")
     public List<Room> searchRooms(
             @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice) {
-        if (type != null) {
-            return roomService.searchByType(type);
-        }
         if (minPrice != null && maxPrice != null) {
             return roomService.searchByPriceRange(minPrice, maxPrice);
+        }
+        if (type != null && !type.isBlank()) {
+            return roomService.searchByType(type);
+        }
+        if (status != null && !status.isBlank()) {
+            return roomService.searchByStatus(status);
         }
         return roomService.getAllRooms();
     }
