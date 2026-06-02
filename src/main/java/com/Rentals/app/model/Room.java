@@ -1,5 +1,6 @@
 package com.Rentals.app.model;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "rooms")
@@ -20,6 +21,10 @@ public class Room {
 
     @Column(name = "room_price", nullable = false)
     private Double roomPrice;
+
+    @OneToOne(mappedBy = "room", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Tenant tenant;
 
     //Getters are used to get the values of the variables
     public Long getRoomId() {
@@ -63,5 +68,12 @@ public class Room {
         this.roomPrice = roomPrice;
     }
 
-  
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
 }
+

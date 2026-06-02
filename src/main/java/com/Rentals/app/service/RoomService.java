@@ -51,7 +51,7 @@ public class RoomService {
     public boolean deleteRoom(Long id) {
         return roomRepository.findById(id)
                 .map(room -> {
-                    roomRepository.delete(room);
+                        roomRepository.delete(room);
                     return true;
                 })
                 .orElse(false);

@@ -1,6 +1,8 @@
 package com.Rentals.app.model;
+import java.util.List;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tenants")
@@ -18,10 +20,11 @@ public class Tenant {
     @Column(name = "email", nullable = true, unique = true)
     private String email;
 
-    @Column(name = "balance", nullable = true)
-    private Double balance;
-
-    @ManyToOne(optional = false)
+    @JsonIgnore
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments;
+    
+    @OneToOne(optional = false)
     @JoinColumn(
         name = "room_id",
         referencedColumnName = "room_id",
@@ -29,5 +32,52 @@ public class Tenant {
     )
     private Room room;
 
-    // getters/setters...
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
+    }
 }

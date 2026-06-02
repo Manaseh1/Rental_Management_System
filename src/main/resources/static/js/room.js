@@ -1,5 +1,10 @@
+// Room management JavaScript
+// This script handles CRUD operations for rooms, as well as filtering and searching.
+
+//api base URL for room-related endpoints
 const apiBase = '/rooms';
 
+// DOM elements for form inputs, buttons, and containers
 const roomForm = document.getElementById('roomForm');
 const roomIdInput = document.getElementById('roomId');
 const roomTypeInput = document.getElementById('roomType');
@@ -17,6 +22,7 @@ const minPriceInput = document.getElementById('minPrice');
 const maxPriceInput = document.getElementById('maxPrice');
 let currentEditRoomId = null;
 
+// Utility function to display status messages to the user
 function showMessage(text, type = 'info') {
     if (!messageEl) return;
     messageEl.textContent = text;
@@ -30,6 +36,7 @@ function showMessage(text, type = 'info') {
     }
 }
 
+// Clears the form and resets it to default state for creating a new room
 function clearForm() {
     currentEditRoomId = null;
     roomIdInput.value = '';
@@ -37,10 +44,12 @@ function clearForm() {
     roomTypeInput.value = '';
     roomDescriptionInput.value = '';
     roomStatusInput.value = 'vacant';
+    roomStatusInput.readOnly = false;
     roomPriceInput.value = '';
     showMessage('Ready to create a new room.');
 }
 
+//Constructs the query for fetching rooms based on filter inputs
 function getQueryUrl() {
     const params = new URLSearchParams();
     const type = filterTypeInput.value.trim();
@@ -130,8 +139,10 @@ function populateForm(room) {
     roomTypeInput.value = room.roomType || '';
     roomDescriptionInput.value = room.roomDescription || '';
     roomStatusInput.value = room.status || 'vacant';
+    roomStatusInput.readOnly = room.status === 'occupied';
     roomPriceInput.value = room.roomPrice || '';
-    showMessage('Editing room ID ' + room.roomId + '. Save to update or cancel to reset.');
+    const statusNote = room.status === 'occupied' ? ' Note: Room status is automatically managed by tenant assignments and cannot be manually changed while occupied.' : '';
+    showMessage('Editing room ID ' + room.roomId + '. Save to update or cancel to reset.' + statusNote);
 }
 
 async function removeRoom(id) {
@@ -185,7 +196,10 @@ roomForm.addEventListener('submit', async event => {
 
         await fetchRooms();
         clearForm();
-        showMessage(isEditing ? 'Room updated successfully.' : 'Room created successfully.', 'success');
+        const statusMsg = isEditing ? 
+            'Room updated successfully. Room occupied status is automatically managed by tenant assignments.' : 
+            'Room created successfully. Room will be marked occupied when a tenant is assigned.';
+        showMessage(statusMsg, 'success');
     } catch (error) {
         showMessage(error.message, 'error');
     }
@@ -203,3 +217,17 @@ window.addEventListener('load', () => {
     clearForm();
     fetchRooms();
 });
+
+// Auto-refresh rooms when page regains focus (user switches tabs/windows)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        fetchRooms();
+    }
+});
+
+// Auto-refresh rooms every 5 seconds to catch updates from tenant operations
+setInterval(() => {
+    if (!document.hidden) {
+        fetchRooms();
+    }
+}, 5000);

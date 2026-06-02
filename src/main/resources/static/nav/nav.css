@@ -1,0 +1,16 @@
+/* Squized code for  */
+.site-nav{background:linear-gradient(90deg,#0f172a,#0b1220);color:#fff;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 18px}
+.site-nav .brand{font-weight:700;color:#fff;text-decoration:none;font-size:1.1rem}
+.nav-links{list-style:none;margin:0;padding:0;display:flex;gap:12px}
+.nav-links li a{color:rgba(255,255,255,0.9);text-decoration:none;padding:8px 10px;border-radius:6px;transition:background .12s,opacity .12s}
+.nav-links li a:hover,.nav-links li a.active{background:rgba(255,255,255,0.06);opacity:1}
+.nav-toggle{display:none;background:transparent;border:0;color:#fff;font-size:1.2rem}
+@media(max-width:760px){
+ .nav-inner{padding:10px}
+ .nav-toggle{display:block}
+ .nav-links{position:absolute;left:0;right:0;top:56px;background:linear-gradient(180deg,#0b1220,#071021);flex-direction:column;padding:12px 18px;gap:8px;display:none}
+ .nav-links.show{display:flex}
+}
+/* Small, unobtrusive badge for current user or status */
+.nav-badge{background:#06102a;color:#9be7ff;padding:4px 8px;border-radius:999px;font-size:0.8rem;margin-left:10px}

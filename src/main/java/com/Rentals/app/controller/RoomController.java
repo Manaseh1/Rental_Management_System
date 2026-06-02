@@ -23,6 +23,24 @@ public class RoomController {
         return roomService.getAllRooms();
     }
 
+    @GetMapping("/search")
+    public List<Room> searchRooms(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        if (minPrice != null && maxPrice != null) {
+            return roomService.searchByPriceRange(minPrice, maxPrice);
+        }
+        if (type != null && !type.isBlank()) {
+            return roomService.searchByType(type);
+        }
+        if (status != null && !status.isBlank()) {
+            return roomService.searchByStatus(status);
+        }
+        return roomService.getAllRooms();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
         return roomService.getRoomById(id)
@@ -58,24 +76,6 @@ public class RoomController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/search")
-    public List<Room> searchRooms(
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice) {
-        if (minPrice != null && maxPrice != null) {
-            return roomService.searchByPriceRange(minPrice, maxPrice);
-        }
-        if (type != null && !type.isBlank()) {
-            return roomService.searchByType(type);
-        }
-        if (status != null && !status.isBlank()) {
-            return roomService.searchByStatus(status);
-        }
-        return roomService.getAllRooms();
     }
 }
 

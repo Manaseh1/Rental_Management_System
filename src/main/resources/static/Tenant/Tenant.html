@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Management | Rental System</title>
+    <link rel="stylesheet" href="../auth_ui/style.css">
+    <link rel="stylesheet" href="./tenant.css">
+    <link rel="stylesheet" href="../nav/nav.css">
+</head>
+<body>
+    <div id="site-nav" data-active="Tenants"></div>
+    <div class="tenant-shell">
+        <header class="tenant-header">
+            <div>
+                <h1>Tenant management</h1>
+                <p>Manage tenant records and assign one room to each tenant.</p>
+            </div>
+            <button id="refreshBtn" class="primary-btn">Refresh</button>
+        </header>
+
+        <section class="tenant-grid">
+            <div class="tenant-panel">
+                <h2>Add or edit tenant</h2>
+                <form id="tenantForm">
+                    <label>
+                        Tenant ID (required)
+                        <input id="tenantId" type="number" placeholder="e.g. 2001" required>
+                    </label>
+
+                    <label>
+                        Name
+                        <input id="tenantName" type="text" placeholder="Tenant full name" required>
+                    </label>
+
+                    <label>
+                        Phone number
+                        <input id="tenantPhone" type="text" placeholder="e.g. +1 555 1234">
+                    </label>
+
+                    <label>
+                        Email
+                        <input id="tenantEmail" type="email" placeholder="tenant@example.com">
+                    </label>
+
+                    <label>
+                        Assigned room ID
+                        <input id="tenantRoomId" type="number" placeholder="e.g. 101" required>
+                    </label>
+
+                    <div class="controls">
+                        <button type="submit" class="primary-btn">Save tenant</button>
+                        <button id="cancelBtn" type="button" class="secondary-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tenant-panel">
+                <div class="list-header">
+                    <div>
+                        <h2>Tenant list</h2>
+                        <p class="status-message" id="message">Loading tenants…</p>
+                    </div>
+                </div>
+
+                <div class="search-row">
+                    <input id="filterName" type="text" placeholder="Filter by name">
+                    <input id="filterPhone" type="text" placeholder="Filter by phone">
+                    <input id="filterEmail" type="text" placeholder="Filter by email">
+                    <input id="filterRoomId" type="number" min="0" placeholder="Room ID">
+                    <button id="searchBtn" class="secondary-btn">Search</button>
+                </div>
+
+                <div id="tenantsContainer" class="tenant-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../nav/nav.js" defer></script>
+    <script src="../js/tenant.js"></script>
+</body>
+</html>

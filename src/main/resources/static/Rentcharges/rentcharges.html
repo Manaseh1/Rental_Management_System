@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Charges | Rental System</title>
+    <link rel="stylesheet" href="../auth_ui/style.css">
+    <link rel="stylesheet" href="../nav/nav.css">
+    <link rel="stylesheet" href="./rentcharges.css">
+</head>
+<body>
+    <div id="site-nav" data-active="Rentcharges"></div>
+
+    <div class="rentcharge-shell">
+        <header class="rentcharge-header">
+            <div>
+                <h1>Rent charges</h1>
+                <p>Create charges for tenants and view charge history tied to rooms and tenants.</p>
+            </div>
+            <button id="refreshBtn" class="primary-btn">Refresh</button>
+        </header>
+
+        <section class="rentcharge-grid">
+            <div class="rentcharge-panel">
+                <h2>Create rent charge</h2>
+                <form id="rentchargeForm">
+                    <label>
+                        Tenant
+                        <select id="tenantSelect" required>
+                            <option value="">Select tenant</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Due date
+                        <input id="dueDate" type="date" required>
+                    </label>
+
+                    <div class="controls">
+                        <button type="submit" class="primary-btn">Save charge</button>
+                        <button id="cancelBtn" type="button" class="secondary-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="rentcharge-panel">
+                <div class="list-header">
+                    <div>
+                        <h2>Charge list</h2>
+                        <p class="status-message" id="message">Loading rent charges…</p>
+                    </div>
+                </div>
+
+                <div class="search-row">
+                    <select id="tenantFilter">
+                        <option value="">All tenants</option>
+                    </select>
+                    <input id="dueDateFilter" type="date" placeholder="Due date">
+                    <button id="searchBtn" class="secondary-btn">Search</button>
+                </div>
+
+                <div id="rentchargesContainer" class="rentcharge-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../nav/nav.js" defer></script>
+    <script src="../js/rentcharges.js"></script>
+</body>
+</html>

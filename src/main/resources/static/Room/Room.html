@@ -6,8 +6,10 @@
     <title>Room Management | Rental System</title>
     <link rel="stylesheet" href="../auth_ui/style.css">
     <link rel="stylesheet" href="./room.css">
+    <link rel="stylesheet" href="../nav/nav.css">
 </head>
 <body>
+    <div id="site-nav" data-active="Rooms"></div>
     <div class="room-shell">
         <header class="room-header">
             <div>
@@ -36,7 +38,7 @@
                         <textarea id="roomDescription" placeholder="Enter a brief description"></textarea>
                     </label>
 
-                    <label>
+                    <label style="display: none;">
                         Status
                         <select id="roomStatus" required>
                             <option value="vacant">Vacant</option>
@@ -81,6 +83,7 @@
         </section>
     </div>
 
+    <script src="../nav/nav.js" defer></script>
     <script src="../js/room.js"></script>
 </body>
 </html>
