@@ -25,7 +25,7 @@
                 <form id="tenantForm">
                     <label>
                         Tenant ID (required)
-                        <input id="tenantId" type="number" placeholder="e.g. 2001" required>
+                        <input id="tenantId" type="hidden" placeholder="e.g. 2001">
                     </label>
 
                     <label>
@@ -39,13 +39,15 @@
                     </label>
 
                     <label>
-                        Email
-                        <input id="tenantEmail" type="email" placeholder="tenant@example.com">
+                        Identification Number
+                        <input id="tenantIdentificationNumber" type="text" placeholder="e.g. 123456789">
                     </label>
 
                     <label>
                         Assigned room ID
-                        <input id="tenantRoomId" type="number" placeholder="e.g. 101" required>
+                        <select id="tenantRoomId" required>
+                            <option value="">Select Room</option>
+                        </select>
                     </label>
 
                     <div class="controls">
@@ -66,7 +68,7 @@
                 <div class="search-row">
                     <input id="filterName" type="text" placeholder="Filter by name">
                     <input id="filterPhone" type="text" placeholder="Filter by phone">
-                    <input id="filterEmail" type="text" placeholder="Filter by email">
+                    <input id="filterIdentificationNumber" type="text" placeholder="Filter by identification number">
                     <input id="filterRoomId" type="number" min="0" placeholder="Room ID">
                     <button id="searchBtn" class="secondary-btn">Search</button>
                 </div>
@@ -77,6 +79,6 @@
     </div>
 
     <script src="../nav/nav.js" defer></script>
-    <script src="../js/tenant.js"></script>
+        <script src="../js/tenant.js" defer></script>
 </body>
 </html>

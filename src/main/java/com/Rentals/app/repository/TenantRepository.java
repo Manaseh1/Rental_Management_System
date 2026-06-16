@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TenantRepository extends JpaRepository<Tenant, Long> {
-    Optional<Tenant> findById(Long id);
+    List<Tenant> findById(String id);
+
+    List<Tenant> findByIdentificationNumber(String identificationNumber);
 
     List<Tenant> findByName(String name);
 
     List<Tenant> findByPhoneNumber(String phoneNumber);
 
-    List<Tenant> findByEmail(String email);
 
     List<Tenant> findByRoom_RoomId(Long roomId);
 }

@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.graalvm.buildtools.native' version'1.1.1'
 }
 
 group = 'com.Rentals'
@@ -36,4 +37,20 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+graalvmNative {
+    binaries {
+        main {
+            buildArgs.add("-H:Name=app")
+        }
+    }
+}
+// ... your standard dependencies and configurations ...
+tasks.named('bootJar') {
+    archiveFileName = 'Rentals.jar'        // simpler name, no version suffix
+    destinationDirectory = file('dist')  // goes straight to dist/
+}
+tasks.named('build') {
+    dependsOn bootJar
 }

@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, String> {
 
-    Optional<Room> findByRoomId(Long roomId);
+    Optional<Room> findByRoomId(String roomId);
 
     List<Room> findByRoomType(String roomType);
 
@@ -17,5 +17,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByStatus(String status);
 
-    boolean existsByRoomId(Long roomId);
+    boolean existsByRoomId(String roomId);
 }

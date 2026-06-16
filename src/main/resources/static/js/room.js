@@ -168,7 +168,7 @@ roomForm.addEventListener('submit', async event => {
 
     const roomId = roomIdInput.value.trim();
     const payload = {
-        roomId: currentEditRoomId ? currentEditRoomId : parseInt(roomId),
+        roomId: currentEditRoomId ? currentEditRoomId :(roomId),
         roomType: roomTypeInput.value.trim(),
         roomDescription: roomDescriptionInput.value.trim(),
         status: roomStatusInput.value,

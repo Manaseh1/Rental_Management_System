@@ -20,7 +20,7 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
-    public Optional<Room> getRoomById(Long id) {
+    public Optional<Room> getRoomById(String id) {
         return roomRepository.findById(id);
     }
 
@@ -34,10 +34,12 @@ public class RoomService {
         if (room.getStatus() == null || room.getStatus().isEmpty()) {
             room.setStatus("vacant");
         }
+        System.out.println("Received Room ID = " + room.getRoomId());
+
         return roomRepository.save(room);
     }
 
-    public Optional<Room> updateRoom(Long id, Room room) {
+    public Optional<Room> updateRoom(String id, Room room) {
         return roomRepository.findById(id)
                 .map(existingRoom -> {
                     existingRoom.setRoomType(room.getRoomType());
@@ -48,7 +50,7 @@ public class RoomService {
                 });
     }
 
-    public boolean deleteRoom(Long id) {
+    public boolean deleteRoom(String id) {
         return roomRepository.findById(id)
                 .map(room -> {
                         roomRepository.delete(room);
@@ -73,7 +75,7 @@ public class RoomService {
         return roomRepository.findByStatus(status);
     }
 
-    public boolean roomExists(Long id) {
+    public boolean roomExists(String id) {
         return id != null && roomRepository.existsById(id);
     }
 }

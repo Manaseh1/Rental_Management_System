@@ -6,4 +6,5 @@ import java.util.List;
 public interface RentchargeRepository extends JpaRepository<Rentcharge,Long> {
     List<Rentcharge> findByTenantId(Long tenantId);
     List<Rentcharge> findByDueDate(String dueDate);
+    Rentcharge findByTenantIdAndDueDateGreaterThan(Long tenantId, String dueDate);
 }

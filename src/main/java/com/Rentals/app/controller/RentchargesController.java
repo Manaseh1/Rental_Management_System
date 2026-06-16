@@ -49,5 +49,14 @@ public class RentchargesController {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRentcharge(@PathVariable Long id) {
+        try {
+            rentchargeService.deleteRentcharge(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

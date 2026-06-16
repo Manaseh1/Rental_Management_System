@@ -39,7 +39,10 @@ public class RentchargeService {
         }
 
         rentcharge.setTenant(tenant);
-        rentcharge.setChargeAmount(tenant.getRoom().getRoomPrice());
+        // Only set default charge amount if not provided by user
+        if (rentcharge.getChargeAmount() == null) {
+            rentcharge.setChargeAmount(tenant.getRoom().getRoomPrice());
+        }
         return rentchargeRepository.save(rentcharge);
     }
 
@@ -55,7 +58,9 @@ public class RentchargeService {
                 if (tenant.getRoom() == null) {
                     throw new IllegalArgumentException("Tenant must be assigned to a room before creating a rent charge.");
                 }
-                existing.setChargeAmount(tenant.getRoom().getRoomPrice());
+            }
+            if (rentchargeUpdate.getChargeAmount() != null) {
+                existing.setChargeAmount(rentchargeUpdate.getChargeAmount());
             }
             if (rentchargeUpdate.getDueDate() != null) {
                 existing.setDueDate(rentchargeUpdate.getDueDate());

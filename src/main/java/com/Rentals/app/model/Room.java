@@ -1,5 +1,6 @@
 package com.Rentals.app.model;
 import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -8,7 +9,7 @@ public class Room {
     //Variables that are used to create the Room table in the database
     @Id
     @Column(name = "room_id", nullable = false, unique = true)
-    private Long roomId;
+    private String roomId;
 
     @Column(name = "room_type", nullable = false)
     private String roomType;
@@ -27,7 +28,7 @@ public class Room {
     private Tenant tenant;
 
     //Getters are used to get the values of the variables
-    public Long getRoomId() {
+    public String getRoomId() {
         return roomId;
     }
 
@@ -48,7 +49,7 @@ public class Room {
     }
 
     //Setters are used to set the values of the variables
-    public void setRoomId(Long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 

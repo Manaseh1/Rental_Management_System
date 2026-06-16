@@ -8,8 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "tenants")
 public class Tenant {
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "identification_number", nullable = true, unique = true)
+    private String identificationNumber;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -17,8 +20,6 @@ public class Tenant {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "email", nullable = true, unique = true)
-    private String email;
 
     @JsonIgnore
     @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -40,6 +41,13 @@ public class Tenant {
     public void setId(Long id) {
         this.id = id;
     }
+    public String getIdentificationNumber() {
+        return identificationNumber;
+    }
+
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
+    }
 
     public String getName() {
         return name;
@@ -57,13 +65,6 @@ public class Tenant {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public Room getRoom() {
         return room;

@@ -30,6 +30,10 @@ body {
 .charge-card-header h3{margin:0;font-size:1.05rem;color:#0f172a}
 .charge-card-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;color:#475569;font-size:.95rem}
 .charge-card-meta span{display:block}
+.charge-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.charge-actions button{border:none;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;transition:transform .1s ease}
+.charge-actions button:hover{transform:translateY(-1px)}
+.charge-actions button.primary-btn{background:#0f172a;color:#fff}
 .search-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
 .search-row select,.search-row input{max-width:240px}
 .primary-btn, .secondary-btn{border:none;border-radius:12px;padding:12px 18px;font-weight:600;cursor:pointer;transition:transform .1s ease}

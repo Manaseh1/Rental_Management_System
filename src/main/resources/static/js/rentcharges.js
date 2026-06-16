@@ -3,6 +3,7 @@ const tenantApi = '/tenants';
 
 const rentchargeForm = document.getElementById('rentchargeForm');
 const tenantSelect = document.getElementById('tenantSelect');
+const chargeAmountInput = document.getElementById('chargeAmountInput');
 const dueDateInput = document.getElementById('dueDate');
 const rentchargesContainer = document.getElementById('rentchargesContainer');
 const messageEl = document.getElementById('message');
@@ -39,13 +40,24 @@ function renderTenantOptions() {
   tenants.forEach(tenant => {
     const option = document.createElement('option');
     option.value = tenant.id;
-    option.textContent = `${tenant.name || 'Tenant'} (#${tenant.id})`;
+    option.textContent = `${tenant.name || 'Tenant'} (#${tenant.id}) - Room ${tenant.room?.roomId || '—'}`;
     tenantSelect.appendChild(option);
 
     const filterOption = option.cloneNode(true);
     tenantFilter.appendChild(filterOption);
   });
 }
+
+tenantSelect.addEventListener('change', () => {
+  const selectedTenantId = tenantSelect.value;
+  if (selectedTenantId) {
+    const selectedTenant = tenants.find(t => t.id === parseInt(selectedTenantId, 10));
+    if (selectedTenant?.room?.roomPrice) {
+      chargeAmountInput.placeholder = `Leave blank for room price ($${selectedTenant.room.roomPrice.toFixed(2)})`;
+      chargeAmountInput.value = '';
+    }
+  }
+});
 
 function getSearchUrl() {
   const tenantId = tenantFilter.value;
@@ -111,16 +123,39 @@ function renderRentcharges(rentcharges) {
       <span><strong>Due date:</strong> ${rc.dueDate || '—'}</span>
     `;
 
+    const actions = document.createElement('div');
+    actions.className = 'charge-actions';
+    actions.innerHTML = `
+      <button type="button" class="primary-btn" onclick="removeRentcharge(${rc.id})">Delete</button>
+    `;
+
     card.appendChild(header);
     card.appendChild(meta);
+    card.appendChild(actions);
     rentchargesContainer.appendChild(card);
   });
+}
+
+async function removeRentcharge(id) {
+  if (!confirm('Delete this rent charge? This cannot be undone.')) return;
+
+  try {
+    const response = await fetch(`${rentchargeApi}/${id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      throw new Error('Unable to delete rent charge.');
+    }
+    await fetchRentcharges();
+    showMessage('Rent charge deleted successfully.', 'success');
+  } catch (error) {
+    showMessage(error.message, 'error');
+  }
 }
 
 rentchargeForm.addEventListener('submit', async event => {
   event.preventDefault();
   const tenantId = tenantSelect.value;
   const dueDate = dueDateInput.value;
+  const chargeAmount = chargeAmountInput.value ? parseFloat(chargeAmountInput.value) : null;
 
   if (!tenantId || !dueDate) {
     showMessage('Tenant and due date are required.', 'error');
@@ -131,6 +166,10 @@ rentchargeForm.addEventListener('submit', async event => {
     tenant: { id: parseInt(tenantId, 10) },
     dueDate
   };
+
+  if (chargeAmount !== null) {
+    payload.chargeAmount = chargeAmount;
+  }
 
   try {
     const response = await fetch(rentchargeApi, {
@@ -151,6 +190,7 @@ rentchargeForm.addEventListener('submit', async event => {
 
 function clearForm() {
   tenantSelect.value = '';
+  chargeAmountInput.value = '';
   dueDateInput.value = '';
 }
 

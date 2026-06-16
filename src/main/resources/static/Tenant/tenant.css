@@ -77,7 +77,7 @@ body {
     font-weight: 500;
 }
 
-.tenant-panel input,
+.tenant-panel input,select,
 .tenant-panel textarea {
     width: 100%;
     padding: 14px 16px;
@@ -194,6 +194,21 @@ button.action-btn:hover {
     flex-wrap: wrap;
     margin-top: 16px;
     color: #4b5563;
+}
+
+.balance-owed {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.balance-credit {
+    color: #059669;
+    font-weight: 600;
+}
+
+.balance-zero {
+    color: #6b7280;
+    font-weight: 600;
 }
 
 .tenant-actions {

@@ -28,6 +28,15 @@ public class TenantController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}/balance")
+    public ResponseEntity<Double> getTenantBalance(@PathVariable Long id) {
+        if (tenantService.getTenantById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Double balance = tenantService.calculateTenantBalance(id);
+        return ResponseEntity.ok(balance);
+    }
+
     @PostMapping
     public ResponseEntity<Tenant> createTenant(@RequestBody Tenant tenant) {
         try {
@@ -59,10 +68,10 @@ public class TenantController {
     public List<Tenant> searchTenants(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phoneNumber,
-            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String identificationNumber,
             @RequestParam(required = false) Long roomId
     ) {
-        return tenantService.searchTenants(name, phoneNumber, email, roomId);
+        return tenantService.searchTenants(name, phoneNumber, identificationNumber, roomId);
     }
 
 }
