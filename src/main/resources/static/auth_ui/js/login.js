@@ -4,13 +4,16 @@ const params = new URLSearchParams(window.location.search);
 function showStatus(text, type) {
     if (!statusBanner) return;
     statusBanner.textContent = text;
+    // Ensure any previous classes are cleared before applying new type
     statusBanner.className = `status-banner ${type}`;
 }
 
+// params.has() returns true whether the value is '', 'true', or anything else
+// so ?error, ?error=true, and ?error=1 all work
 if (params.has('error')) {
-    showStatus('Login failed. Check your email and password.', 'error');
+    showStatus('Login failed. Please check your email/username and password.', 'error');
 } else if (params.has('registered')) {
-    showStatus('Registration successful! Please log in.', 'success');
+    showStatus('Account created! You can now log in.', 'success');
 } else if (params.has('logout')) {
-    showStatus('You are logged out. Sign in again to continue.', 'info');
+    showStatus('You have been logged out. Sign in to continue.', 'info');
 }
