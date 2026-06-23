@@ -4,8 +4,12 @@ import com.Rentals.app.repository.UserRepository;
 import jakarta.validation.Valid;
 
 import com.Rentals.app.service.AuthService;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 
@@ -21,14 +25,16 @@ public class AuthController {
 
     // Show login page by redirecting to the static HTML asset
     @GetMapping("/login")
-    public String showLoginPage() {
-        return "redirect:/auth_ui/login.html";
+    public String showLoginPage(
+        @RequestParam(value = "error", required = false) String error,
+        @RequestParam(value = "msg", required = false) String msg) {
+        return "forward:/auth_ui/login.html";
     }
 
     // Show register page by redirecting to the static HTML asset
     @GetMapping("/register")
     public String showRegisterPage(){
-        return "redirect:/auth_ui/register.html";
+        return "forward:/auth_ui/register.html";
     }
 
     @GetMapping("/dashboard")
@@ -51,7 +57,14 @@ public class AuthController {
     @ResponseBody
     public Object getAllUsers() {
         return userRepository.findAll();
-    }
-    
+    }    
+    @Configuration
+    class StaticResourceConfig implements WebMvcConfigurer {
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+            .addResourceHandler("/auth_ui/**")
+            .addResourceLocations("classpath:/static/auth_ui/");
+    }}
 }

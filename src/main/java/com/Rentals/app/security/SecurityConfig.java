@@ -15,7 +15,12 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/login", "/register",
                     "/auth_ui/**", "/debug/**",
-                    "/css/**", "/js/**", "/images/**"
+                    "/css/**", "/js/**", "/images/**" ,"/login","/register","/auth_ui/**",        // This covers ALL files under auth_ui including js/ and css/
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/*.css",
+                    "/*.js"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -24,12 +29,12 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/dashboard", true)
-                .failureUrl("/login?error=true")
+                .failureUrl("/login?error=L002")
                 .permitAll()
             )
             .logout(logout -> logout
                 // After logout, redirect to /login?logout — your JS already handles this param
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutSuccessUrl("/login?msg=L003")
                 .permitAll()
             );
 
