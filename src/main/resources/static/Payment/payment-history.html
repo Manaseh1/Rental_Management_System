@@ -16,7 +16,7 @@
                 <h1>Payment history</h1>
                 <p>Review tenant payments, totals, and manage records from a single dashboard.</p>
             </div>
-            <button type="button" class="primary-btn" onclick="loadPayments()">Refresh</button>
+            <button type="button" class="primary-btn" onclick="loadAllPayments()">Refresh</button>
         </header>
 
         <section class="payment-grid">
@@ -29,7 +29,7 @@
                     <input type="hidden" id="paymentId">
                     <label>
                         Tenant
-                        <select id="tenantSelect" onchange="loadPayments()" required>
+                        <select id="tenantSelect" required>
                             <option value="">Select Tenant</option>
                         </select>
                     </label>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Total Amount Paid</div>
-                        <div class="stat-value" id="totalAmount">$0.00</div>
+                        <div class="stat-value" id="totalAmount">Ksh 0.00</div>
                     </div>
                 </div>
             </div>
@@ -78,7 +78,16 @@
                 <div class="list-header">
                     <div>
                         <h2>Payment records</h2>
-                        <p class="status-message" id="paymentMessage">Select a tenant to load payments.</p>
+                        <p class="status-message" id="paymentMessage">Loading payments...</p>
+                    </div>
+                    <!-- Search bar — filters the table by tenant name in real time -->
+                    <div class="search-wrapper">
+                        <input
+                            type="text"
+                            id="tenantSearch"
+                            placeholder="Search by tenant name..."
+                            oninput="filterPayments()"
+                        >
                     </div>
                 </div>
 
@@ -86,7 +95,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Payment ID</th>
+                                <!-- Tenant Name replaces Payment ID -->
+                                <th>Tenant</th>
                                 <th>Amount</th>
                                 <th>Payment Date</th>
                                 <th>Method</th>
@@ -105,8 +115,14 @@
         const API_BASE = '/payments';
         const TENANT_API = '/tenants';
 
-        // Load tenants on page load
-        document.addEventListener('DOMContentLoaded', loadTenants);
+        // Holds ALL payments fetched from the server
+        // filterPayments() works against this array so no extra API calls needed
+        let allPayments = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTenants();
+            loadAllPayments();
+        });
 
         async function loadTenants() {
             try {
@@ -125,50 +141,66 @@
             }
         }
 
-        async function loadPayments() {
-            const tenantId = document.getElementById('tenantSelect').value;
-            if (!tenantId) {
-                document.getElementById('paymentsTableBody').innerHTML = '';
-                return;
-            }
-
+        // Fetches ALL payments across every tenant and stores them in allPayments[]
+        async function loadAllPayments() {
+            document.getElementById('paymentMessage').textContent = 'Loading payments...';
             try {
-                const response = await fetch(`${API_BASE}/tenant/${tenantId}`);
-                const payments = await response.json();
-                displayPayments(payments);
-                loadTotalAmount(tenantId);
+                const response = await fetch(`${API_BASE}`);
+                if (!response.ok) throw new Error('Failed to fetch payments');
+                allPayments = await response.json();
+                displayPayments(allPayments);
+                updateStats(allPayments);
             } catch (error) {
                 console.error('Error loading payments:', error);
+                document.getElementById('paymentMessage').textContent = 'Failed to load payments.';
             }
         }
 
-        async function loadTotalAmount(tenantId) {
-            try {
-                const response = await fetch(`${API_BASE}/tenant/${tenantId}/total`);
-                const total = await response.json();
-                document.getElementById('totalPayments').textContent = 
-                    document.getElementById('paymentsTableBody').querySelectorAll('tr').length;
-                document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
-            } catch (error) {
-                console.error('Error loading total:', error);
+        // Filters allPayments[] by tenant name — no API call, instant
+        function filterPayments() {
+            const query = document.getElementById('tenantSearch').value.toLowerCase().trim();
+            if (!query) {
+                displayPayments(allPayments);
+                updateStats(allPayments);
+                return;
             }
+            const filtered = allPayments.filter(payment =>
+                (payment.tenant?.name || '').toLowerCase().includes(query)
+            );
+            displayPayments(filtered);
+            updateStats(filtered);
+        }
+
+        // Updates the stat cards to reflect whatever is currently displayed
+        function updateStats(payments) {
+            const total = payments.reduce((sum, p) => sum + p.amount, 0);
+            document.getElementById('totalPayments').textContent = payments.length;
+            document.getElementById('totalAmount').textContent = `Ksh ${total.toFixed(2)}`;
         }
 
         function displayPayments(payments) {
             const tbody = document.getElementById('paymentsTableBody');
             tbody.innerHTML = '';
-            
+
             if (payments.length === 0) {
+                document.getElementById('paymentMessage').textContent = 'No payments found.';
                 tbody.innerHTML = '<tr><td colspan="6">No payments found</td></tr>';
                 return;
             }
 
+            document.getElementById('paymentMessage').textContent =
+                `Showing ${payments.length} payment${payments.length !== 1 ? 's' : ''}`;
+
             payments.forEach(payment => {
                 const row = document.createElement('tr');
                 const date = new Date(payment.paymentDate).toLocaleDateString();
+
+                // Tenant name shown in first column — falls back to 'Unknown' if missing
+                const tenantName = payment.tenant?.name || 'Unknown';
+
                 row.innerHTML = `
-                    <td>${payment.id}</td>
-                    <td>$${payment.amount.toFixed(2)}</td>
+                    <td>${tenantName}</td>
+                    <td>Ksh ${payment.amount.toFixed(2)}</td>
                     <td>${date}</td>
                     <td>${payment.paymentMethod || '-'}</td>
                     <td>${payment.description || '-'}</td>
@@ -179,16 +211,6 @@
                 `;
                 tbody.appendChild(row);
             });
-        }
-
-        function preparePaymentForm() {
-            const tenantId = document.getElementById('tenantSelect').value;
-            if (!tenantId) {
-                alert('Please select a tenant first');
-                return;
-            }
-            resetPaymentForm();
-            document.getElementById('amount').focus();
         }
 
         async function openEditModal(paymentId) {
@@ -241,7 +263,7 @@
 
                 if (response.ok) {
                     resetPaymentForm();
-                    loadPayments();
+                    loadAllPayments();
                     alert(paymentId ? 'Payment updated!' : 'Payment added!');
                 } else {
                     alert('Error saving payment');
@@ -258,7 +280,7 @@
                         method: 'DELETE'
                     });
                     if (response.ok) {
-                        loadPayments();
+                        loadAllPayments();
                         alert('Payment deleted!');
                     } else {
                         alert('Error deleting payment');

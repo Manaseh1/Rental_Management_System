@@ -17,6 +17,10 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    @GetMapping
+    public List<Payment> getAllPayments() {
+         return paymentService.getAllPayments();
+}
     // Get all payments for a tenant
     @GetMapping("/tenant/{tenantId}")
     public ResponseEntity<List<Payment>> getPaymentsByTenant(@PathVariable Long tenantId) {

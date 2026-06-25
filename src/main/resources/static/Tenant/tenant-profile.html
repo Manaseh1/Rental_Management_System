@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Profile</title>
+    <link rel="stylesheet" href="../auth_ui/style.css">
+    <link rel="stylesheet" href="../nav/nav.css">
+    <link rel="stylesheet" href="tenant-profile.css">
+</head>
+<body>
+
+    <div class="profile-shell">
+
+        <!-- ── HEADER ── -->
+        <header class="profile-header">
+            <a href="Tenant.html" class="back-link">&#8592; All Tenants</a>
+            <div class="header-actions">
+                <span class="status-message" id="message"></span>
+                <button class="secondary-btn" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Cancel</button>
+                <button class="primary-btn"   id="saveEditBtn"   style="display:none" onclick="saveEdit()">Save changes</button>
+                <button class="primary-btn"   id="editBtn"       onclick="enableEdit()">Edit profile</button>
+            </div>
+        </header>
+
+        <!-- ── IDENTITY CARD ── -->
+        <section class="profile-card">
+            <div class="avatar" id="avatarInitials">--</div>
+            <div class="profile-fields">
+                <div class="field-row">
+                    <label>Full name</label>
+                    <span class="field-value" id="dispName">—</span>
+                    <input class="field-input" id="editName" type="text" placeholder="Full name" style="display:none">
+                </div>
+                <div class="field-row">
+                    <label>Phone number</label>
+                    <span class="field-value" id="dispPhone">—</span>
+                    <input class="field-input" id="editPhone" type="text" placeholder="Phone number" style="display:none">
+                </div>
+                <div class="field-row">
+                    <label>ID / Passport</label>
+                    <span class="field-value" id="dispId">—</span>
+                    <input class="field-input" id="editIdNum" type="text" placeholder="ID / Passport number" style="display:none">
+                </div>
+                <div class="field-row">
+                    <label>Room</label>
+                    <span class="field-value" id="dispRoom">—</span>
+                    <select class="field-input" id="editRoom" style="display:none">
+                        <option value="">Select room</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── SUMMARY STATS ── -->
+        <section class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Room type</div>
+                <div class="stat-value" id="statRoomType">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Monthly rent</div>
+                <div class="stat-value" id="statRent">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total paid</div>
+                <div class="stat-value" id="statTotalPaid">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Balance</div>
+                <div class="stat-value" id="statBalance">—</div>
+            </div>
+        </section>
+
+        <!-- ── TABS ── -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="payments">Payments</button>
+            <button class="tab-btn" data-tab="charges">Rent charges</button>
+        </div>
+
+        <!-- ── PAYMENTS TAB ── -->
+        <section class="tab-panel active" id="tab-payments">
+            <div class="panel-toolbar">
+                <h2>Payment history</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="secondary-btn small" onclick="loadPayments()">Refresh</button>
+                    <button class="primary-btn small"   onclick="openPaymentModal()">+ Add payment</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ── RENT CHARGES TAB ── -->
+        <section class="tab-panel" id="tab-charges">
+            <div class="panel-toolbar">
+                <h2>Rent charges</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="secondary-btn small" onclick="loadCharges()">Refresh</button>
+                    <button class="primary-btn small"   onclick="openChargeModal()">+ Add charge</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Charge amount</th>
+                            <th>Due date</th>
+                            <th>Room</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chargesBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PAYMENT MODAL  (add + edit)
+    ══════════════════════════════════════════ -->
+    <div class="modal-backdrop" id="paymentModalBackdrop" onclick="closePaymentModal()"></div>
+    <div class="modal" id="paymentModal">
+        <div class="modal-header">
+            <h3 id="paymentModalTitle">Add payment</h3>
+            <button class="modal-close" onclick="closePaymentModal()">&#10005;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="modalPaymentId">
+            <div class="modal-field">
+                <label>Amount (Ksh)</label>
+                <input type="number" id="modalAmount" step="0.01" placeholder="e.g. 5000" required>
+            </div>
+            <div class="modal-field">
+                <label>Payment date</label>
+                <input type="datetime-local" id="modalPaymentDate" required>
+            </div>
+            <div class="modal-field">
+                <label>Payment method</label>
+                <select id="modalPaymentMethod" required>
+                    <option value="">Select method</option>
+                    <option value="cash">Cash</option>
+                    <option value="Mpesa">Mpesa</option>
+                    <option value="check">Check</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="card">Card</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label>Description</label>
+                <textarea id="modalDescription" rows="3" placeholder="Optional note"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closePaymentModal()">Cancel</button>
+            <button class="primary-btn"   onclick="savePayment()">Save payment</button>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         RENT CHARGE MODAL  (add only)
+    ══════════════════════════════════════════ -->
+    <div class="modal-backdrop" id="chargeModalBackdrop" onclick="closeChargeModal()"></div>
+    <div class="modal" id="chargeModal">
+        <div class="modal-header">
+            <h3>Add rent charge</h3>
+            <button class="modal-close" onclick="closeChargeModal()">&#10005;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-field">
+                <label>Charge amount (Ksh) <span class="hint">— leave blank to use room price</span></label>
+                <input type="number" id="modalChargeAmount" step="0.01" placeholder="Optional — defaults to room price">
+            </div>
+            <div class="modal-field">
+                <label>Due date</label>
+                <input type="date" id="modalDueDate" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeChargeModal()">Cancel</button>
+            <button class="primary-btn"   onclick="saveCharge()">Save charge</button>
+        </div>
+    </div>
+
+    <script>
+        const params     = new URLSearchParams(window.location.search);
+        const tenantId   = params.get('id');
+
+        const TENANT_API     = '/tenants';
+        const PAYMENT_API    = '/payments';
+        const RENTCHARGE_API = '/rentcharges';
+
+        let tenantData = {};
+        let editing    = false;
+
+        // ─────────────────────────────────────────
+        // BOOT
+        // ─────────────────────────────────────────
+        window.addEventListener('load', async () => {
+            if (!tenantId) { showMessage('No tenant ID in URL.', 'error'); return; }
+            await loadTenant();
+            await loadRoomsDropdown();
+            loadPayments();
+            loadCharges();
+            initTabs();
+        });
+
+        // ─────────────────────────────────────────
+        // TENANT INFO
+        // ─────────────────────────────────────────
+        async function loadTenant() {
+            try {
+                const [tr, br] = await Promise.all([
+                    fetch(`${TENANT_API}/${tenantId}`),
+                    fetch(`${TENANT_API}/${tenantId}/balance`)
+                ]);
+                if (!tr.ok) throw new Error('Tenant not found.');
+                tenantData    = await tr.json();
+                const balance = br.ok ? await br.json() : null;
+                renderTenantInfo(tenantData, balance);
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        function renderTenantInfo(t, balance) {
+            const initials = (t.name || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+            document.getElementById('avatarInitials').textContent = initials;
+
+            document.getElementById('dispName').textContent  = t.name  || '—';
+            document.getElementById('dispPhone').textContent = t.phoneNumber || '—';
+            document.getElementById('dispId').textContent    = t.identificationNumber || '—';
+            document.getElementById('dispRoom').textContent  = t.room?.roomId ? `Room ${t.room.roomId}` : '—';
+
+            document.getElementById('editName').value  = t.name  || '';
+            document.getElementById('editPhone').value = t.phoneNumber || '';
+            document.getElementById('editIdNum').value = t.identificationNumber || '';
+            document.getElementById('editRoom').value  = t.room?.roomId || '';
+
+            document.getElementById('statRoomType').textContent = t.room?.roomType || '—';
+            document.getElementById('statRent').textContent     = t.room?.roomPrice
+                ? `Ksh ${t.room.roomPrice.toFixed(2)}` : '—';
+
+            if (balance !== null) {
+                const sign = balance >= 0 ? '' : '-';
+                const abs  = Math.abs(balance).toFixed(2);
+                const el   = document.getElementById('statBalance');
+                el.textContent = `${sign}Ksh ${abs}`;
+                el.style.color = balance > 0 ? '#dc2626' : balance < 0 ? '#16a34a' : 'inherit';
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // PAYMENTS — load & display
+        // ─────────────────────────────────────────
+        async function loadPayments() {
+            const tbody = document.getElementById('paymentsBody');
+            tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">Loading...</td></tr>';
+            try {
+                const res = await fetch(`${PAYMENT_API}/tenant/${tenantId}`);
+                if (!res.ok) throw new Error('Could not load payments.');
+                const payments = await res.json();
+
+                const total = payments.reduce((s, p) => s + p.amount, 0);
+                document.getElementById('statTotalPaid').textContent = `Ksh ${total.toFixed(2)}`;
+
+                if (payments.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">No payments recorded.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                payments.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>Ksh ${p.amount.toFixed(2)}</td>
+                        <td>${new Date(p.paymentDate).toLocaleDateString()}</td>
+                        <td>${p.paymentMethod || '—'}</td>
+                        <td>${p.description  || '—'}</td>
+                        <td>
+                            <button class="btn-edit small"   onclick="openPaymentModal(${p.id})">Edit</button>
+                            <button class="btn-delete small" onclick="deletePayment(${p.id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="5" class="error-cell">${e.message}</td></tr>`;
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // PAYMENT MODAL — open / close / save / delete
+        // ─────────────────────────────────────────
+        function openPaymentModal(paymentId = null) {
+            // Reset form first
+            document.getElementById('modalPaymentId').value    = '';
+            document.getElementById('modalAmount').value       = '';
+            document.getElementById('modalPaymentDate').value  = '';
+            document.getElementById('modalPaymentMethod').value = '';
+            document.getElementById('modalDescription').value  = '';
+            document.getElementById('paymentModalTitle').textContent = paymentId ? 'Edit payment' : 'Add payment';
+
+            if (paymentId) {
+                // Fetch existing payment and pre-fill
+                fetch(`${PAYMENT_API}/${paymentId}`)
+                    .then(r => r.json())
+                    .then(p => {
+                        document.getElementById('modalPaymentId').value     = p.id;
+                        document.getElementById('modalAmount').value        = p.amount;
+                        document.getElementById('modalPaymentDate').value   = p.paymentDate.replace(' ', 'T');
+                        document.getElementById('modalPaymentMethod').value = p.paymentMethod || '';
+                        document.getElementById('modalDescription').value   = p.description  || '';
+                    })
+                    .catch(() => showMessage('Could not load payment details.', 'error'));
+            }
+
+            document.getElementById('paymentModalBackdrop').classList.add('active');
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModalBackdrop').classList.remove('active');
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        async function savePayment() {
+            const paymentId = document.getElementById('modalPaymentId').value;
+            const amount    = document.getElementById('modalAmount').value;
+            const date      = document.getElementById('modalPaymentDate').value;
+            const method    = document.getElementById('modalPaymentMethod').value;
+
+            if (!amount || !date || !method) {
+                showMessage('Amount, date and method are required.', 'error');
+                return;
+            }
+
+            const payload = {
+                amount:        parseFloat(amount),
+                paymentDate:   date + ':00',
+                paymentMethod: method,
+                description:   document.getElementById('modalDescription').value
+            };
+
+            try {
+                let res;
+                if (paymentId) {
+                    // Edit existing
+                    res = await fetch(`${PAYMENT_API}/${paymentId}`, {
+                        method:  'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body:    JSON.stringify(payload)
+                    });
+                } else {
+                    // Add new — POST to tenant-scoped endpoint
+                    res = await fetch(`${PAYMENT_API}/tenant/${tenantId}`, {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body:    JSON.stringify(payload)
+                    });
+                }
+                if (!res.ok) throw new Error('Failed to save payment.');
+                closePaymentModal();
+                showMessage(paymentId ? 'Payment updated.' : 'Payment added.', 'success');
+                loadPayments();
+                loadTenant(); // refresh balance stat
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        async function deletePayment(id) {
+            if (!confirm('Delete this payment? This cannot be undone.')) return;
+            try {
+                const res = await fetch(`${PAYMENT_API}/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete payment.');
+                showMessage('Payment deleted.', 'success');
+                loadPayments();
+                loadTenant();
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        // ─────────────────────────────────────────
+        // RENT CHARGES — load & display
+        // ─────────────────────────────────────────
+        async function loadCharges() {
+            const tbody = document.getElementById('chargesBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">Loading...</td></tr>';
+            try {
+                const res = await fetch(`${RENTCHARGE_API}/search?tenantId=${tenantId}`);
+                if (!res.ok) throw new Error('Could not load rent charges.');
+                const charges = await res.json();
+
+                if (charges.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-cell">No rent charges found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                charges.forEach(rc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>Ksh ${rc.chargeAmount?.toFixed(2) ?? '0.00'}</td>
+                        <td>${rc.dueDate || '—'}</td>
+                        <td>${rc.tenant?.room?.roomId ? `Room ${rc.tenant.room.roomId}` : '—'}</td>
+                        <td>
+                            <button class="btn-delete small" onclick="deleteCharge(${rc.id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="4" class="error-cell">${e.message}</td></tr>`;
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // CHARGE MODAL — open / close / save / delete
+        // ─────────────────────────────────────────
+        function openChargeModal() {
+            document.getElementById('modalChargeAmount').value = '';
+            document.getElementById('modalDueDate').value      = '';
+            document.getElementById('chargeModalBackdrop').classList.add('active');
+            document.getElementById('chargeModal').classList.add('active');
+        }
+
+        function closeChargeModal() {
+            document.getElementById('chargeModalBackdrop').classList.remove('active');
+            document.getElementById('chargeModal').classList.remove('active');
+        }
+
+        async function saveCharge() {
+            const dueDate      = document.getElementById('modalDueDate').value;
+            const chargeAmount = document.getElementById('modalChargeAmount').value;
+
+            if (!dueDate) { showMessage('Due date is required.', 'error'); return; }
+
+            const payload = {
+                tenant: { id: parseInt(tenantId, 10) },
+                dueDate
+            };
+            if (chargeAmount) payload.chargeAmount = parseFloat(chargeAmount);
+
+            try {
+                const res = await fetch(RENTCHARGE_API, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error('Failed to save rent charge.');
+                closeChargeModal();
+                showMessage('Rent charge added.', 'success');
+                loadCharges();
+                loadTenant(); // refresh balance
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        async function deleteCharge(id) {
+            if (!confirm('Delete this rent charge? This cannot be undone.')) return;
+            try {
+                const res = await fetch(`${RENTCHARGE_API}/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed to delete charge.');
+                showMessage('Rent charge deleted.', 'success');
+                loadCharges();
+                loadTenant();
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        // ─────────────────────────────────────────
+        // EDIT PROFILE
+        // ─────────────────────────────────────────
+        function enableEdit() {
+            editing = true;
+            ['dispName','dispPhone','dispId','dispRoom'].forEach(id =>
+                document.getElementById(id).style.display = 'none');
+            ['editName','editPhone','editIdNum','editRoom'].forEach(id =>
+                document.getElementById(id).style.display = '');
+            document.getElementById('editBtn').style.display       = 'none';
+            document.getElementById('saveEditBtn').style.display   = '';
+            document.getElementById('cancelEditBtn').style.display = '';
+        }
+
+        function cancelEdit() {
+            editing = false;
+            document.getElementById('editName').value  = tenantData.name || '';
+            document.getElementById('editPhone').value = tenantData.phoneNumber || '';
+            document.getElementById('editIdNum').value = tenantData.identificationNumber || '';
+            document.getElementById('editRoom').value  = tenantData.room?.roomId || '';
+            swapToDisplay();
+        }
+
+        function swapToDisplay() {
+            ['dispName','dispPhone','dispId','dispRoom'].forEach(id =>
+                document.getElementById(id).style.display = '');
+            ['editName','editPhone','editIdNum','editRoom'].forEach(id =>
+                document.getElementById(id).style.display = 'none');
+            document.getElementById('editBtn').style.display       = '';
+            document.getElementById('saveEditBtn').style.display   = 'none';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        async function saveEdit() {
+            const payload = {
+                id:                   parseInt(tenantId, 10),
+                name:                 document.getElementById('editName').value.trim(),
+                phoneNumber:          document.getElementById('editPhone').value.trim(),
+                identificationNumber: document.getElementById('editIdNum').value.trim(),
+                room: { roomId: document.getElementById('editRoom').value || null }
+            };
+            if (!payload.name) { showMessage('Name is required.', 'error'); return; }
+            try {
+                const res = await fetch(`${TENANT_API}/${tenantId}`, {
+                    method:  'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error('Failed to update tenant.');
+                tenantData    = await res.json();
+                const balRes  = await fetch(`${TENANT_API}/${tenantId}/balance`);
+                const balance = balRes.ok ? await balRes.json() : null;
+                renderTenantInfo(tenantData, balance);
+                swapToDisplay();
+                showMessage('Profile updated successfully.', 'success');
+            } catch (e) { showMessage(e.message, 'error'); }
+        }
+
+        // ─────────────────────────────────────────
+        // ROOMS DROPDOWN
+        // ─────────────────────────────────────────
+        async function loadRoomsDropdown() {
+            try {
+                const res   = await fetch('/rooms');
+                if (!res.ok) return;
+                const rooms = await res.json();
+                const sel   = document.getElementById('editRoom');
+                sel.innerHTML = '<option value="">Select room</option>';
+                rooms.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value       = r.roomId;
+                    opt.textContent = `Room ${r.roomId} (${r.roomType})`;
+                    sel.appendChild(opt);
+                });
+                sel.value = tenantData.room?.roomId || '';
+            } catch (e) { console.error('Could not load rooms:', e); }
+        }
+
+        // ─────────────────────────────────────────
+        // TABS
+        // ─────────────────────────────────────────
+        function initTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+                });
+            });
+        }
+
+        // ─────────────────────────────────────────
+        // UTILS
+        // ─────────────────────────────────────────
+        function showMessage(text, type = 'info') {
+            const el = document.getElementById('message');
+            el.textContent = text;
+            el.style.color = type === 'error' ? '#dc2626' : type === 'success' ? '#16a34a' : '#2563eb';
+            setTimeout(() => { el.textContent = ''; }, 4000);
+        }
+    </script>
+    <script src="../nav/nav.js" defer></script>
+</body>
+</html>

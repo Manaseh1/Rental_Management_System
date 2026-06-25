@@ -51,6 +51,7 @@ public class TenantController {
             return ResponseEntity.badRequest().build();
         }
     }
+    
     @PutMapping("/{id}")
     public ResponseEntity<Tenant> updateTenant(@PathVariable Long id, @RequestBody Tenant tenant) {
         return tenantService.updateTenant(id, tenant)

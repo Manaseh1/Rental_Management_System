@@ -18,6 +18,10 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
         this.tenantRepository = tenantRepository;
     }
+    //Get all payments
+    public List<Payment> getAllPayments() {
+    return paymentRepository.findAll();
+}
 
     // Get all payments for a tenant
     public List<Payment> getPaymentsByTenant(Long tenantId) {

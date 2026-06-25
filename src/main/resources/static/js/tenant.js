@@ -133,6 +133,13 @@ function renderTenants(tenants) {
         const actions = document.createElement('div');
         actions.className = 'tenant-actions';
 
+        // Declare all buttons BEFORE appending them
+        const profileButton = document.createElement('a');
+        profileButton.href = `./tenant-profile.html?id=${tenant.id}`;
+        profileButton.className = 'action-btn';
+        profileButton.textContent = 'View profile';
+        profileButton.style.cssText = 'text-decoration:none; display:inline-block;';
+
         const editButton = document.createElement('button');
         editButton.type = 'button';
         editButton.className = 'action-btn';
@@ -145,14 +152,88 @@ function renderTenants(tenants) {
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => deleteTenant(tenant.id));
 
-        actions.append(editButton, deleteButton);
+        // append AFTER all three are declared
+        actions.append(profileButton, editButton, deleteButton);
         card.appendChild(actions);
         tenantsContainer.appendChild(card);
-        
-        // Fetch and display balance
+
         fetchTenantBalance(tenant.id);
     });
 }
+// function renderTenants(tenants) {
+//     tenantsContainer.innerHTML = '';
+//     if (!tenants || tenants.length === 0) {
+//         tenantsContainer.innerHTML = '<div class="feedback">No tenants found. Use the form to add a new tenant.</div>';
+//         return;
+//     }
+
+
+//     tenants.forEach(tenant => {
+//         const card = document.createElement('div');
+//         card.className = 'tenant-card';
+
+//         const header = document.createElement('div');
+//         header.className = 'tenant-card-header';
+//         header.innerHTML = `
+//             <div>
+//                 <h3 class="tenant-card-title">${tenant.name || 'Unnamed tenant'}</h3>
+//                 <p>ID: ${tenant.id || 'N/A'}</p>
+//             </div>
+//             <div class="tenant-room">Room ${tenant.room?.roomId || '—'}</div>
+//         `;
+//         card.appendChild(header);
+
+//         const meta = document.createElement('div');
+//         meta.className = 'tenant-card-meta';
+//         meta.innerHTML = `
+//             <span>Phone: ${tenant.phoneNumber || '—'}</span>
+//             <span>Identification Number: ${tenant.identificationNumber || '—'}</span>
+//             <span id="balance-${tenant.id}">Balance: Loading...</span>
+//         `;
+//         card.appendChild(meta);
+
+//         const actions = document.createElement('div');
+//         actions.className = 'tenant-actions';
+
+
+// actions.append(profileButton, editButton, deleteButton);
+//         const profileButton = document.createElement('a');
+//         profileButton.href = `./tenant-profile.html?id=${tenant.id}`;
+//         profileButton.className = 'action-btn';
+//         profileButton.textContent = 'View profile';
+//         profileButton.style.cssText = 'text-decoration:none; display:inline-block;';
+
+//         const editButton = document.createElement('button');
+//         editButton.type = 'button';
+//         editButton.className = 'action-btn';
+//         editButton.textContent = 'Edit';
+//         editButton.addEventListener('click', () => populateForm(tenant));
+
+//         const deleteButton = document.createElement('button');
+//         deleteButton.type = 'button';
+//         deleteButton.className = 'action-btn';
+//         deleteButton.textContent = 'Delete';
+//         deleteButton.addEventListener('click', () => deleteTenant(tenant.id));
+//         // const editButton = document.createElement('button');
+//         // editButton.type = 'button';
+//         // editButton.className = 'action-btn';
+//         // editButton.textContent = 'Edit';
+//         // editButton.addEventListener('click', () => populateForm(tenant));
+
+//         // const deleteButton = document.createElement('button');
+//         // deleteButton.type = 'button';
+//         // deleteButton.className = 'action-btn';
+//         // deleteButton.textContent = 'Delete';
+//         // deleteButton.addEventListener('click', () => deleteTenant(tenant.id));
+
+//         // actions.append(editButton, deleteButton);
+//         // card.appendChild(actions);
+//         // tenantsContainer.appendChild(card);
+        
+//         // Fetch and display balance
+//         fetchTenantBalance(tenant.id);
+//     });
+// }
 
 async function fetchTenantBalance(tenantId) {
     try {
