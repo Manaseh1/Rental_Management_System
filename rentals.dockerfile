@@ -1,10 +1,19 @@
-FROM openjdk:17.0.20.1
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /Rental_Management_System
 
-ARG JAR_FILE = build/libs/app-0.0.1-SNAPSHOT-plain.jar
-COPY ${JAR_FILE} app-0.0.1-SNAPSHOT-plain.jar
+COPY gradlew settings.gradle build.gradle ./
+COPY gradle gradle/
+
+COPY src src/
+
+RUN chmod +x gradlew && ./gradlew bootJar -x test
+
+
+FROM eclipse-temurin:17-jre-alpine
+
+COPY --from=build /Rentals_management_System/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app-0.0.1-SNAPSHOT-plain.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
