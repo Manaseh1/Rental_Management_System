@@ -12,8 +12,11 @@ RUN chmod +x gradlew && ./gradlew bootJar -x test
 
 FROM eclipse-temurin:17-jre-alpine
 
-COPY --from=build /build/libs/*.jar app.jar
+WORKDIR /Rental_Management_System
+
+# Corrected path matching the build stage WORKDIR using wildcard *.jar
+COPY --from=build /Rental_Management_System/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
