@@ -1,4 +1,4 @@
-FROM openjdk:17.0.20.1
+FROM openjdk:17-jdk-slim
 
 WORKDIR /Rental_Management_System
 
